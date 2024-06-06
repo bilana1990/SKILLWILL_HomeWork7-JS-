@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SKILLWILL home work 7</title>
+  </head>
+  <body>
+    <script>
+      //         setTimeout ფუნქცია იყენებს callback-ს,
+      // დაწერეთ მისი promise-ზე დადაფუძნებული
+      // ალტერნატივა
+      // ● (მაგ: mySetTimeout(delay).then(...)
+
+      function mySetTimeout(delay) {
+        return new Promise((resolve) => {
+          setTimeout(resolve, delay);
+        });
+      }
+
+      mySetTimeout(3000).then(() => {
+        console.log("3 წამი გავიდა!");
+      });
+
+      //       გამოიყენე პირველ დავალებაში შექმნილი
+      // ფუნქცია, რათა განავრცო ჩვენს მიერ
+      // დაწერილი “Toy Shop” შემდეგი პირობის
+      // იმპლემენტაციით:
+      // ➔ სათამაშოს დამზადებას სჭირდება
+      // დაახლოებით 3 წამი. (დროის მითითება
+      // შესაძლებელი უნდა იყოს დინამიურად)
+      // ➔ დავამატოთ კიდევ ერთი ნაბიჯი, რომელსაც
+      // დავარქმევთ პირობითად, “deliverToys”,
+      // რომლის დაყოვნებაც 2 წამია
+      // (გადაეცემა დინამიურად)
+
+      function makeToys() {
+        return new Promise((resolve, reject) => {
+          if (Math.random() > 0.1) {
+            resolve("undefected");
+          } else {
+            reject("defected");
+          }
+        });
+      }
+      function sellToys(status) {
+        return new Promise((resolve, reject) => {
+          if (status === "undefected") {
+            if (Math.random() > 0.7) {
+              resolve("toy has been sold");
+            } else {
+              reject("toy was unsuccseful");
+            }
+          }
+        });
+      }
+
+      function deliverToys(message, delay) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(`${message} and delivered`);
+          }, delay);
+        });
+      }
+
+      mySetTimeout(3000).then(() => {
+        makeToys()
+          .then((res) => sellToys(res))
+          .then((res) => deliverToys(res, 2000))
+          .then((res) => console.log(res))
+          .catch((err) => console.log(err));
+      });
+    </script>
+    <!-- სათამაშოს გაყიდვას სჭირდება 1 წამი
+(დინამიურად)
+● ყოველი მომდევნო ნაბიჯი უნდა
+ელოდებოდეს წინა ნაბიჯის რეზულტატს და
+შესაბამისად წყვეტდეს მოხდება თუ არა
+მისი შესრულება
+● გამოიყენე .then().catch() და async/await
+● სინტაქსები. (2 ვარიანტი) -->
+    <script>
+      function mySetTimeout(delay) {
+        return new Promise((resolve) => {
+          setTimeout(resolve, delay);
+        });
+      }
+
+      function makeToys() {
+        return new Promise((resolve, reject) => {
+          if (Math.random() > 0.1) {
+            resolve("undefected");
+          } else {
+            reject("defected");
+          }
+        });
+      }
+
+      function sellToys(status, delay) {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            if (status === "undefected") {
+              if (Math.random() > 0.7) {
+                resolve("toy has been sold");
+              } else {
+                reject("toy was unsuccessful");
+              }
+            } else {
+              reject("cannot sell defected toy");
+            }
+          }, delay);
+        });
+      }
+
+      function deliverToys(message, delay) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(`${message} and delivered`);
+          }, delay);
+        });
+      }
+
+      async function processToys() {
+        try {
+          await mySetTimeout(3000);
+          const toyStatus = await makeToys();
+          const sellStatus = await sellToys(toyStatus, 1000);
+          const deliveryStatus = await deliverToys(sellStatus, 2000);
+          console.log(deliveryStatus);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      processToys();
+    </script>
+  </body>
+</html>
